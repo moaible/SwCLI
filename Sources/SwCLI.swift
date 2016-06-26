@@ -23,16 +23,10 @@ struct SwCLI {
     }
     
     struct Result {
-        var status: Int32
-        var outputPipe: Pipe
-        var errorPipe: Pipe
+        let status: Int32
+        let outputPipe: Pipe
+        let errorPipe: Pipe
     }
-    
-    var input: AnyObject?
-    
-    var errorHandler: AnyObject?
-    
-    var inDrectory: String?
     
     static func shell(
         _ args: [String],
@@ -82,6 +76,10 @@ struct SwCLI {
         return ret.status == 0
     }
     
+    static func contains(command: String) -> Bool {
+        return self.passes(["hash", command])
+    }
+    
     static func assertResult(_ result: Result) throws {
         if result.status == 2 {
             throw Error.cancelled
@@ -89,10 +87,6 @@ struct SwCLI {
             let errorData = result.errorPipe.fileHandleForReading.readDataToEndOfFile()
             throw Error.system(result.status, String(data: errorData, encoding: .utf8))
         }
-    }
-    
-    static func contains(command: String) -> Bool {
-        return self.passes(["hash", command])
     }
     
     static func receivedCommand() -> String {
