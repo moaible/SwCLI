@@ -33,7 +33,7 @@ public struct SwCLI {
         let errorPipe: Pipe
     }
     
-    public init(launchPath: String = "/usr/bin/env", inDirectory: String?, waitUntilExit: Bool = true) {
+    public init(launchPath: String = "/usr/bin/env", inDirectory: String? = nil, waitUntilExit: Bool = true) {
         self.launchPath = launchPath
         self.inDirectory = inDirectory
         self.waitUntilExit = waitUntilExit
