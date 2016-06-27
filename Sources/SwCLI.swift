@@ -16,10 +16,9 @@ import Foundation
 
 struct SwCLI {
     
-    enum Error: ErrorProtocol { // Errors pertaining to running commands
+    enum Error: ErrorProtocol {
         case system(Int32, String?)
         case cancelled
-        case terminalSize
     }
     
     struct Result {
