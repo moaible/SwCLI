@@ -14,7 +14,7 @@
 
 import Foundation
 
-struct SwCLI {
+public struct SwCLI {
     
     enum Error: ErrorProtocol {
         case system(Int32, String?)
