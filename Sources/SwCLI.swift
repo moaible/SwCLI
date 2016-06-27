@@ -16,6 +16,12 @@ import Foundation
 
 public struct SwCLI {
     
+    var launchPath: String
+    
+    var inDirectory: String?
+    
+    var waitUntilExit: Bool
+    
     public enum Error: ErrorProtocol {
         case system(Int32, String?)
         case cancelled
@@ -27,15 +33,15 @@ public struct SwCLI {
         let errorPipe: Pipe
     }
     
-    public static func shell(
-        _ args: [String],
-        input: AnyObject? = nil,
-        errorHandler: AnyObject? = nil,
-        inDirectory: String? = nil,
-        waitUntilExit: Bool = true) -> Result
-    {
+    public init(launchPath: String = "/usr/bin/env", inDirectory: String?, waitUntilExit: Bool = true) {
+        self.launchPath = launchPath
+        self.inDirectory = inDirectory
+        self.waitUntilExit = waitUntilExit
+    }
+    
+    public func shell(_ args: [String], input: AnyObject? = nil, errorReceiver: AnyObject? = nil) -> Result {
         let task = Task()
-        task.launchPath = "/usr/bin/env"
+        task.launchPath = self.launchPath
         task.arguments = args
         let outputPipe = Pipe()
         task.standardOutput = outputPipe
@@ -44,30 +50,29 @@ public struct SwCLI {
         if let input = input {
             task.standardInput = input
         }
-        if let inDirectory = inDirectory {
+        if let inDirectory = self.inDirectory {
             task.currentDirectoryPath = inDirectory
         }
         task.launch()
-        if waitUntilExit {
+        if self.waitUntilExit {
             task.waitUntilExit()
         }
-        
         return Result(status: task.terminationStatus, outputPipe: outputPipe, errorPipe: errorPipe)
     }
     
-    public static func run(_ args: [String]) throws {
+    public func run(_ args: [String]) throws {
         let result = self.shell(args)
         try self.assertResult(result)
     }
     
-    public static func runWithRead(_ args: [String]) throws -> String {
+    public func runWithRead(_ args: [String]) throws -> String {
         let result = self.shell(args)
         try self.assertResult(result)
         let readData = result.outputPipe.fileHandleForReading.readDataToEndOfFile()
         return String(data: readData, encoding: .utf8) ?? ""
     }
     
-    public static func passes(_ args: [String]) -> Bool {
+    public func passes(_ args: [String]) -> Bool {
         let ret = self.shell(args)
         if let errorLog = String.init(data: ret.errorPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) {
             print(errorLog)
@@ -75,17 +80,17 @@ public struct SwCLI {
         return ret.status == 0
     }
     
-    public static func fail(_ message: String) {
+    public func fail(_ message: String) {
         print()
         print("Error: \(message)")
         exit(1)
     }
     
-    public static func contains(command: String) -> Bool {
+    public func contains(command: String) -> Bool {
         return self.passes(["hash", command])
     }
     
-    public static func assertResult(_ result: Result) throws {
+    public func assertResult(_ result: Result) throws {
         if result.status == 2 {
             throw Error.cancelled
         } else if result.status != 0 {
@@ -94,7 +99,7 @@ public struct SwCLI {
         }
     }
     
-    public static func receivedCommand() -> String {
+    public func receivedCommand() -> String {
         return readLine(strippingNewline: true) ?? ""
     }
 }
