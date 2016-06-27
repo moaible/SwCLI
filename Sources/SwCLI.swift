@@ -16,18 +16,18 @@ import Foundation
 
 public struct SwCLI {
     
-    enum Error: ErrorProtocol {
+    public enum Error: ErrorProtocol {
         case system(Int32, String?)
         case cancelled
     }
     
-    struct Result {
+    public struct Result {
         let status: Int32
         let outputPipe: Pipe
         let errorPipe: Pipe
     }
     
-    static func shell(
+    public static func shell(
         _ args: [String],
         input: AnyObject? = nil,
         errorHandler: AnyObject? = nil,
@@ -55,19 +55,19 @@ public struct SwCLI {
         return Result(status: task.terminationStatus, outputPipe: outputPipe, errorPipe: errorPipe)
     }
     
-    static func run(_ args: [String]) throws {
+    public static func run(_ args: [String]) throws {
         let result = self.shell(args)
         try self.assertResult(result)
     }
     
-    static func runWithRead(_ args: [String]) throws -> String {
+    public static func runWithRead(_ args: [String]) throws -> String {
         let result = self.shell(args)
         try self.assertResult(result)
         let readData = result.outputPipe.fileHandleForReading.readDataToEndOfFile()
         return String(data: readData, encoding: .utf8) ?? ""
     }
     
-    static func passes(_ args: [String]) -> Bool {
+    public static func passes(_ args: [String]) -> Bool {
         let ret = self.shell(args)
         if let errorLog = String.init(data: ret.errorPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) {
             print(errorLog)
@@ -75,17 +75,17 @@ public struct SwCLI {
         return ret.status == 0
     }
     
-    static func fail(_ message: String) {
+    public static func fail(_ message: String) {
         print()
         print("Error: \(message)")
         exit(1)
     }
     
-    static func contains(command: String) -> Bool {
+    public static func contains(command: String) -> Bool {
         return self.passes(["hash", command])
     }
     
-    static func assertResult(_ result: Result) throws {
+    public static func assertResult(_ result: Result) throws {
         if result.status == 2 {
             throw Error.cancelled
         } else if result.status != 0 {
@@ -94,7 +94,7 @@ public struct SwCLI {
         }
     }
     
-    static func receivedCommand() -> String {
+    public static func receivedCommand() -> String {
         return readLine(strippingNewline: true) ?? ""
     }
 }
