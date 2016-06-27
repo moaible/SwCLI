@@ -75,6 +75,12 @@ struct SwCLI {
         return ret.status == 0
     }
     
+    static func fail(_ message: String) {
+        print()
+        print("Error: \(message)")
+        exit(1)
+    }
+    
     static func contains(command: String) -> Bool {
         return self.passes(["hash", command])
     }
