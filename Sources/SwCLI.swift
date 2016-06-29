@@ -65,11 +65,15 @@ public struct SwCLI {
         try self.assertResult(result)
     }
     
-    public func runWithRead(_ args: [String]) throws -> String {
+    public func runWithRead(_ args: [String]) throws -> String? {
+        return String(data: try self.runWithReadData(args), encoding: .utf8)
+    }
+    
+    public func runWithReadData(_ args: [String]) throws -> Data {
         let result = self.shell(args)
         try self.assertResult(result)
         let readData = result.outputPipe.fileHandleForReading.readDataToEndOfFile()
-        return String(data: readData, encoding: .utf8) ?? ""
+        return readData
     }
     
     public func passes(_ args: [String]) -> Bool {
