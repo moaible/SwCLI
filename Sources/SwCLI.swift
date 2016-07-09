@@ -16,11 +16,11 @@ import Foundation
 
 public struct SwCLI {
     
-    var launchPath: String
+    public var launchPath: String
     
-    var inDirectory: String?
+    public var inDirectory: String?
     
-    var waitUntilExit: Bool
+    public var waitUntilExit: Bool
     
     public enum Error: ErrorProtocol {
         case system(Int32, String?)
