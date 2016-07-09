@@ -8,6 +8,20 @@ SwCLI is CLI interface minimum module.
 
 * Swift 3.0
 
+## Installation
+
+* Add `SwCLI` to your `Package.swift`
+
+```
+import PackageDescription
+
+let package = Package(
+    dependencies: [
+        .Package(url: "https://github.com/moaible/SwCLI.git", majorVersion: 0, minor: 3),
+    ]
+)
+```
+
 ## Usage
 
 ### runWithRead
@@ -37,18 +51,4 @@ if SwCLI().contains(["git"]) {
 
 ```swift
 fail("forced termination")
-```
-
-## Installation
-
-* Add `SwCLI` to your `Package.swift`
-
-```
-import PackageDescription
-
-let package = Package(
-    dependencies: [
-        .Package(url: "https://github.com/moaible/SwCLI.git", majorVersion: 0, minor: 2),
-    ]
-)
 ```
